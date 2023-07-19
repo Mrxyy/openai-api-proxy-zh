@@ -1,33 +1,23 @@
-import { serve } from "https://deno.land/std/http/server.ts";
+import { serve } from "https://deno.land/std@0.181.0/http/server.ts";
+
+const s = serve({ port: 8000 });
+console.log("http://localhost:8000/");
 
 const OPENAI_API_HOST = "api.openai.com";
 
-serve(async (request) => {
-  const url = new URL(request.url, `http://${request.headers.get("host")}`);
+for await (const req of s) {
+  const url = new URL(req.url, "http://localhost:8000");
 
   if (url.pathname === "/") {
-    const readmeUrl = new URL("./Readme.md", import.meta.url);
-    const readmeResponse = await fetch(readmeUrl);
-    return {
-      status: readmeResponse.status,
-      headers: readmeResponse.headers,
-      body: readmeResponse.body,
-    };
+    const response = await fetch(new URL("./Readme.md", import.meta.url));
+    req.respond({ body: response.body });
+  } else {
+    url.host = OPENAI_API_HOST;
+    const response = await fetch(url, {
+      method: req.method,
+      headers: req.headers,
+      body: req.body,
+    });
+    req.respond({ status: response.status, headers: response.headers, body: response.body });
   }
-
-  url.host = OPENAI_API_HOST;
-  const targetUrl = url.toString();
-
-  const response = await fetch(targetUrl, {
-    method: request.method,
-    headers: request.headers,
-    body: request.body,
-  });
-
-  const responseHeaders = new Headers(response.headers);
-  return {
-    status: response.status,
-    headers: responseHeaders,
-    body: response.body,
-  };
-});
+}
