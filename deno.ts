@@ -1,18 +1,6 @@
-import { serve } from "https://deno.land/std@0.181.0/http/server.ts";
+import { Application, proxy } from 'https://deno.land/x/oak/mod.ts';
 
-const OPENAI_API_HOST = "api.openai.com";
+const app = new Application();
+app.use(proxy('https://api.openai.com'));
 
-serve(async (request) => {
-  const url = new URL(request.url);
-  
-  if (url.pathname === "/") {
-    return fetch(new URL("./Readme.md", import.meta.url));
-  }
-  
-  url.host = OPENAI_API_HOST;
-  const res = await fetch(url, request);
-  return new Response(res.body, {
-    headers: res.headers,
-    status: res.status
-  });
-});
+app.listen({ port: 8000 });
