@@ -7,7 +7,6 @@ OpenAI/ChatGPT 的 API。
 ---
 
 **⚠️⚠️⚠️⚠️⚠️⚠️\
-由于 https://closeai.deno.dev
 访问量巨大，已经超过了 Deno Deploy 的额度，本代理暂时关闭，请大家参照教程自行部署。\
 ⚠️⚠️⚠️⚠️⚠️⚠️**
 
@@ -22,7 +21,7 @@ OpenAI/ChatGPT 的 API。
 或者，访问 https://deno.new 域名，把 deno.ts 复制到 Playground 中，点击 Play
 按钮。
 
-### CloudFlare
+### CloudFlare (不适合国内用户)
 
 将 cloudflare.ts 复制到 CloudFlare Workers 中。
 
