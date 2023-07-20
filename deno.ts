@@ -1,15 +1,18 @@
-import { serve } from "https://deno.land/std@0.181.0/http/server.ts";
+import { Server } from "https://deno.land/std/http/server.ts";
 
-const OPENAI_API_HOST = "api.openai.com";
+const TARGET = "https://api.openai.com";
+const handler = async (request: Request) => {
+  const url = new URL(request.url);
+  const targetUrl = new URL(TARGET + url.pathname + url.search);
 
-serve(async (request) => {
-const url = new URL(request.url);
+  return await fetch(targetUrl.toString(), {
+    method: request.method,
+    headers: request.headers,
+    body: request.body,
+  });
+};
 
-if (url.pathname === "/") {
-return fetch(new URL("./Readme.md", import.meta.url));
-}
+const server = new Server({ handler });
+console.log("server listening on http://localhost:80");
 
-url.host = OPENAI_API_HOST;
-return fetch(url, request);
-});
-
+await server.listenAndServe();
